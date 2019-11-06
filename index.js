@@ -21,3 +21,10 @@ const ruUp = [['Ё', 'Backquote'], ['!', 'Digit1'], ['"', 'Digit2'], ['№', 'Di
   ['capsLock', 'CapsLock'], ['Ф', 'KeyA'], ['Ы', 'KeyS'], ['В', 'KeyD'], ['А', 'KeyF'], ['П', 'KeyG'], ['Р', 'KeyH'], ['О', 'KeyJ'], ['Л', 'KeyK'], ['Д', 'KeyL'], ['Ж', 'Semicolon'], ['Э', 'Quote'], ['enter', 'Enter'],
   ['shift', 'ShiftLeft'], ['Я', 'KeyZ'], ['Ч', 'KeyX'], ['С', 'KeyC'], ['М', 'KeyV'], ['И', 'KeyB'], ['Т', 'KeyN'], ['Ь', 'KeyM'], ['Б', 'Comma'], ['Ю', 'Period'], [',', 'Slash'], ['▲', 'ArrowUp'], ['shift', 'ShiftRight'],
   ['ctrl', 'ControlLeft'], ['win', 'MetaLeft'], ['alt', 'AltLeft'], [' ', 'Space'], ['alt', 'AltRight'], ['◄', 'ArrowLeft'], ['▼', 'ArrowDown'], ['►', 'ArrowRight'], ['ctrl', 'ControlRight']];
+
+function initKeyboard(keys) {
+  const divs = document.querySelectorAll('.key');
+  for (let i = 0; i < divs.length; i += 1) {
+    divs[i].innerHTML = `<span id="${keys[i][1]}">${keys[i][0]}</span>`;
+  }
+}
