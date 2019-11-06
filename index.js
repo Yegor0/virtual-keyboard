@@ -22,12 +22,157 @@ const ruUp = [['Ё', 'Backquote'], ['!', 'Digit1'], ['"', 'Digit2'], ['№', 'Di
   ['shift', 'ShiftLeft'], ['Я', 'KeyZ'], ['Ч', 'KeyX'], ['С', 'KeyC'], ['М', 'KeyV'], ['И', 'KeyB'], ['Т', 'KeyN'], ['Ь', 'KeyM'], ['Б', 'Comma'], ['Ю', 'Period'], [',', 'Slash'], ['▲', 'ArrowUp'], ['shift', 'ShiftRight'],
   ['ctrl', 'ControlLeft'], ['win', 'MetaLeft'], ['alt', 'AltLeft'], [' ', 'Space'], ['alt', 'AltRight'], ['◄', 'ArrowLeft'], ['▼', 'ArrowDown'], ['►', 'ArrowRight'], ['ctrl', 'ControlRight']];
 
+const State = {
+  ControlLeft: false,
+  AltLeft: false,
+  shift: false,
+  capslock: false,
+};
+
 function initKeyboard(keys) {
   const divs = document.querySelectorAll('.key');
   for (let i = 0; i < divs.length; i += 1) {
     divs[i].innerHTML = `<span id="${keys[i][1]}">${keys[i][0]}</span>`;
   }
 }
+
+function setActive(eventCode) {
+  const elem = document.getElementById(eventCode);
+  if (!elem.parentElement.className.includes(' active')) elem.parentElement.className += ' active';
+}
+
+function printText(eventCode) {
+  const elem = document.getElementById(eventCode);
+  const textArea = document.querySelector('.textArea');
+  textArea.textContent += elem.textContent;
+}
+
+function changeLang(eventCode) {
+  State[eventCode] = true;
+  if (State.ControlLeft && State.AltLeft) {
+    switch (localStorage.lang) {
+      case 'ruDown': {
+        initKeyboard(enDown);
+        localStorage.lang = 'enDown';
+        break;
+      }
+      case 'enDown': {
+        initKeyboard(ruDown);
+        localStorage.lang = 'ruDown';
+        break;
+      }
+      case 'ruUp': {
+        initKeyboard(enUp);
+        localStorage.lang = 'enUp';
+        break;
+      }
+      case 'enUp': {
+        initKeyboard(ruUp);
+        localStorage.lang = 'ruUp';
+        break;
+      }
+      default: break;
+    }
+  }
+}
+
+function capslock(shiftFlag) {
+  if (State.capslock && !shiftFlag) {
+    return;
+  }
+  State.capslock = true;
+  switch (localStorage.lang) {
+    case 'ruDown': {
+      initKeyboard(ruUp);
+      localStorage.lang = 'ruUp';
+      break;
+    }
+    case 'enDown': {
+      initKeyboard(enUp);
+      localStorage.lang = 'enUp';
+      break;
+    }
+    case 'ruUp': {
+      initKeyboard(ruDown);
+      localStorage.lang = 'ruDown';
+      break;
+    }
+    case 'enUp': {
+      initKeyboard(enDown);
+      localStorage.lang = 'enDown';
+      break;
+    }
+    default: break;
+  }
+}
+
+function shift() {
+  if (!State.shift) {
+    capslock(true);
+  }
+  State.shift = true;
+}
+
+function keyDown(eventCode) {
+  setActive(eventCode);
+  const textArea = document.querySelector('.textArea');
+
+  switch (eventCode) {
+    case 'AltLeft':
+    case 'ControlLeft': changeLang(eventCode); return;
+    case 'ShiftRight':
+    case 'ShiftLeft': shift(); return;
+    case 'Backspace': textArea.textContent = textArea.textContent.slice(0, -1); return;
+    case 'Enter': textArea.textContent += '\n'; return;
+    case 'Tab': textArea.textContent += '   '; return;
+    case 'Delete': textArea.textContent = ''; return;
+    case 'CapsLock': capslock(); return;
+    case 'ControlRight': return;
+    case 'MetaLeft':
+    case 'AltRight': return;
+    default: break;
+  }
+
+  printText(eventCode);
+}
+
+function keyUp(eventCode) {
+  if (eventCode === 'ControlLeft' || eventCode === 'AltLeft') State[eventCode] = false;
+  if (eventCode.includes('Shift') && State.shift) {
+    capslock(true);
+    State.shift = false;
+  }
+  if (eventCode === 'CapsLock') {
+    State.capslock = false;
+  }
+
+  const elem = document.getElementById(eventCode);
+  elem.parentElement.className = elem.parentElement.className.replace(' active', '');
+}
+
+function listen() {
+  const elements = document.querySelectorAll('span');
+  elements.forEach((elem) => {
+    elem.parentElement.addEventListener('mousedown', () => {
+      keyDown(elem.id);
+    });
+    elem.parentElement.addEventListener('mouseup', () => {
+      keyUp(elem.id);
+    });
+    elem.parentElement.addEventListener('mouseleave', () => {
+      keyUp(elem.id);
+    });
+  });
+}
+
+document.addEventListener('keydown', (event) => {
+  event.preventDefault();
+  keyDown(event.code);
+});
+
+document.addEventListener('keyup', (event) => {
+  keyUp(event.code);
+});
 
 function start() {
   const container = document.createElement('div');
@@ -61,6 +206,8 @@ function start() {
     case 'enDown': initKeyboard(enDown); break;
     default: localStorage.lang = 'ruUp'; break;
   }
+
+  listen();
 }
 
 start();
