@@ -1,0 +1,26 @@
+{
+  "name": "virtual-keyboard",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "eslint": "^6.6.0",
+    "eslint-config-airbnb": "^18.0.1"
+  },
+  "devDependencies": {
+    "eslint-plugin-import": "^2.18.2"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Yegor0/virtual-keyboard.git"
+  },
+  "author": "yahor2000@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Yegor0/virtual-keyboard/issues"
+  },
+  "homepage": "https://github.com/Yegor0/virtual-keyboard#readme"
+}
