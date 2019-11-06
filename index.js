@@ -28,3 +28,39 @@ function initKeyboard(keys) {
     divs[i].innerHTML = `<span id="${keys[i][1]}">${keys[i][0]}</span>`;
   }
 }
+
+function start() {
+  const container = document.createElement('div');
+  container.className = 'container';
+  document.body.append(container);
+
+  const textArea = document.createElement('textarea');
+  textArea.className = 'textArea';
+  container.append(textArea);
+
+  const keyboard = document.createElement('div');
+  keyboard.className = 'keyboard';
+  container.append(keyboard);
+
+  let string = '';
+  for (let i = 0; i < ruUp.length; i += 1) {
+    if (ruUp[i][0] === ' ') {
+      string += '<div class="key space"></div>';
+    } else if (ruUp[i][0].length >= 3) {
+      string += `<div class="key ${ruUp[i][0].toLowerCase()}"></div>`;
+    } else {
+      string += '<div class="key"></div>';
+    }
+  }
+  keyboard.innerHTML = string;
+
+  switch (localStorage.lang) {
+    case 'ruUp': initKeyboard(ruUp); break;
+    case 'ruDown': initKeyboard(ruDown); break;
+    case 'enUp': initKeyboard(enUp); break;
+    case 'enDown': initKeyboard(enDown); break;
+    default: localStorage.lang = 'ruUp'; break;
+  }
+}
+
+start();
